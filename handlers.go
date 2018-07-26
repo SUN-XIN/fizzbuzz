@@ -23,6 +23,7 @@ func handlerServerRun(s *server) http.Handler {
 			quickResponse(w, http.StatusInternalServerError, []byte("Failed Read Body"))
 			return
 		}
+		defer r.Body.Close()
 
 		var cr clientRequest
 		err = decodeObj(b, &cr)
@@ -76,8 +77,20 @@ func handlerServerRun(s *server) http.Handler {
 // handler to update server's configuration
 func handlerUpdateConf(s *server) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		key := r.FormValue("key")
+		if key == "" {
+			quickResponse(w, http.StatusUnauthorized, []byte("Only admin can access"))
+			return
+		}
+
+		if !s.CheckAdmin(key) {
+			quickResponse(w, http.StatusForbidden, []byte("Bad Password"))
+			return
+		}
+
 		// another methode to read body (different with handlerServerRun)
 		dec := json.NewDecoder(r.Body)
+		defer r.Body.Close()
 
 		var conf configuration
 		err := dec.Decode(&conf)
@@ -90,6 +103,7 @@ func handlerUpdateConf(s *server) http.Handler {
 		err = conf.validate()
 		if err != nil {
 			quickResponse(w, http.StatusBadRequest, []byte(err.Error()))
+			return
 		}
 
 		s.UpdateConf(&conf)
@@ -102,6 +116,7 @@ func handlerServerStat(s *server) http.Handler {
 		key := r.FormValue("key")
 		if key == "" {
 			quickResponse(w, http.StatusUnauthorized, []byte("Only admin can access"))
+			return
 		}
 
 		if s.CheckAdmin(key) {
@@ -109,6 +124,7 @@ func handlerServerStat(s *server) http.Handler {
 			fmt.Fprintf(w, "%s", res)
 		} else {
 			quickResponse(w, http.StatusForbidden, []byte("Bad Password"))
+			return
 		}
 	})
 }
@@ -127,9 +143,11 @@ func quickResponse(w http.ResponseWriter, httpCode int, msg []byte) {
 }
 
 func responseGzip(w http.ResponseWriter, httpCode int, msg []byte) {
+	log.Printf("reponse in gzip")
 	w.Header().Set("Content-Encoding", "gzip")
 	w.WriteHeader(httpCode)
 
 	zw := gzip.NewWriter(w)
 	zw.Write(msg)
+	zw.Close()
 }
