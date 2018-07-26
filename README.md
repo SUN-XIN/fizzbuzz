@@ -59,7 +59,16 @@ I realize it with the func processRequestBis()
     $> curl http://localhost:8080/stat?key=SUNXIN
     ```
 
-# USER TEST
+# USER TEST (workflow)
+```
+1. send first simple request and check response (200 + body)  
+2. check server stat with password  
+3. update server's configuration(new password + force gzip the response)  
+4. check server stat with old password -> must get 403  
+5. check server stat with new password -> must get 200  
+6. send second request and check response must be gzip  
+```
+
  * path: /client_demo
  * restart the server in order to use default parameters
  * test
