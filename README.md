@@ -58,6 +58,17 @@ I realize it with the func processRequestBis()
     ```
     $> curl http://localhost:8080/stat?key=SUNXIN
     ```
+
+# USER TEST
+ * path: /client_demo
+ * restart the server in order to use default parameters
+ * test
+    ```
+    $> go build
+    $> ./fizzbuzz
+    $> cd client_demo
+    $> go run main.go
+    ```
  
 # TODO
 * When the size of HistoryCall reaches its limit, we should push the information to a DB.  
