@@ -45,7 +45,7 @@ I realize it with the func processRequestBis()
 * execute  
     ```$> ./fizzbuzz```
 * test  
-    ```$> go test ./...```
+    ```$> go test```
 * example client   
     ```
     $> curl -H "Content-Type: application/json" -X POST -d '{"string1":"yes","string2":"no","int1":5,"int2":8,"limit":100,"response_gzip":false}' http://localhost:8080/run
