@@ -78,7 +78,12 @@ I realize it with the func processRequestBis()
     $> cd client_demo
     $> go run main.go
     ```
- 
+
+# BENCHMARK
+    $> go test -test.bench Bench
+    BenchmarkProcess-4      	   10000	    127705 ns/op
+    BenchmarkProcessBis-4   	   10000	    172216 ns/op
+    
 # TODO
 * When the size of HistoryCall reaches its limit, we should push the information to a DB.  
 Or we can create a synchronisation system, update to a DB for each update (each new client's call).  
